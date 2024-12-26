@@ -1,0 +1,17 @@
+{
+  "/dev/api/*": {
+   "target": "https://tjfh2jct45.execute-api.ap-south-1.amazonaws.com/dev",
+      "secure": false,
+        "logLevel": "debug",
+     
+        "changeOrigin": false
+  },
+  "/pre/api/*": {
+    "target": "https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pronet",
+    "logLevel": "debug",
+    "pathRewrite": {
+        "^/dev": ""
+    }
+}
+ 
+}

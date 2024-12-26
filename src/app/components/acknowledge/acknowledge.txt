@@ -1,0 +1,106 @@
+ 
+ constructor( private fb: FormBuilder,){
+
+  this.backUrl =  environment.bakendUrl;
+  this.baseUrl = environment.backend.baseURL;
+ 
+  this.acknowledgeForm = this.fb.group({
+   username: ['', Validators.required],
+   password: ['', Validators.required],
+   firstName: ['', Validators.required],
+   lastName: ['', Validators.required],
+   email: ['', Validators.required],
+
+   rememberMe: [false],
+   isSpringJwt : this.fb.group( {
+     text: ['Node'],
+     clicked:[false]
+   })
+ });
+ }
+
+ ngOnInit() {
+  this.acknowledgeForm = this.fb.group({
+    username: ['', Validators.required],
+    password: ['', Validators.required],
+    rememberMe: [false],
+    isSpringJwt : this.fb.group( {
+      text: ['Node'],
+      clicked:[false]
+    })
+  });
+  this.acknowledgeForm.get('username')?.valueChanges.pipe(debounceTime(500) )
+  //.distinctUntilChanged()
+  .subscribe(data => {
+    console.log(" save ticket")
+    console.log(" refresh ticket")
+  })
+}
+onSubmit(e:Event) {
+  //e.preventDefault();
+ console.log(" onSubmit form "+JSON.stringify(this.acknowledgeForm?.valid))
+ console.log('Form is valid:', this.acknowledgeForm?.valid);
+ console.log('Form status:', this.acknowledgeForm?.status);
+// console.log('Form value:', this.acknowledgeForm.value);
+ if (this.acknowledgeForm?.valid) {
+   console.log(" form valid  "+JSON.stringify(this.acknowledgeForm?.valid))
+   const { username, password, rememberMe } = this.acknowledgeForm?.value;
+   const user = new User()
+   user.username = username;
+   user.password = password;
+   if(this .defaultAuth =='Spring') {
+     this.loginService.acknowledge( user)?.subscribe( (registres:any) => { 
+       if (registres) {
+         console.log("Spring Server  "+JSON.stringify(registres))
+         let og = registres;
+       //  console.log("acknowledge C sub "+og["sub"])
+       //  console.log("Login C email "+og["email"])
+        // localStorage.setItem("sub",og["sub"])
+         // localStorage.setItem("email",og["email"])
+         // Navigate to the dashboard or another page
+        // localStorage.setItem("token", og)
+         this.router.navigate(['/login']);
+       } 
+     },
+     (error:any) => {
+       console.error('Login failed', error);
+       alert('Invalid credentials');
+     })
+   } 
+   else {
+      let rt =  this.loginnodeServ.login( user)
+      of(rt)?.subscribe( (logres:any) => { 
+       if (logres ) {
+         console.log("Node Server  "+JSON.stringify(logres ))
+         let og = logres ; let userInfoLocal: any ={username:'',email:'',accessToken:''};
+          let idx = 0;
+         for (const key in og)
+           {        const value = og[key];
+                switch( value ) {
+                                 // case 'id':  userInfo.id = Object.values(bb)[idx]
+                                  //   break; 
+                                     case 'username':userInfoLocal.username = Object.values(og)[idx]
+                                         break;
+                                         case 'email': userInfoLocal.email= Object.values(og)[idx]
+                                             break;
+                                   //          case 'roles': userInfo.roles = Object.values(bb)[idx]
+                                    //             break;
+                                                 case 'accessToken':  userInfoLocal.accessToken = Object.values(og)[idx]
+                                                     break;
+                              }
+               idx++;
+           }
+           localStorage.setItem("sub",userInfoLocal.username)
+           localStorage.setItem("email",userInfoLocal.email)
+         // Navigate to the dashboard or another page
+           localStorage.setItem("token", og)
+         this.router.navigate(['/dashboard']);
+       } 
+     },
+     (error:any) => {
+       console.error('Login failed', error);
+       alert('Invalid credentials');
+     })
+   }
+ }
+}

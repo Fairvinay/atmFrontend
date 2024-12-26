@@ -1,0 +1,22 @@
+.message {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fffae6;
+    border: 1px solid #ffec99;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #856404;
+}
+
+.message strong {
+    font-weight: bold;
+}
+
+.message a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.message a:hover {
+    text-decoration: underline;
+}

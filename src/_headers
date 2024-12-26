@@ -1,0 +1,4 @@
+/*
+Access-Control-Allow-Origin: *
+X-Frame-Options: allow-from https://storenotify.in ,  http://localhost:4200/ , https://5j3c1fv094.execute-api.us-east-1.amazonaws.com
+X-XSS-Protection: 0;

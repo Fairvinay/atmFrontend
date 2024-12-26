@@ -1,0 +1,88 @@
+ 
+   let bk = this.backUrl ;
+  if( bk!==null  && bk!==undefined && bk.indexOf("awstrap") > -1 ){
+          // backend url is aws 
+          console.log( "serving cloud spring backend...  ");
+          (async () =>  {
+                  let config = {
+                    headers: {
+                     'Content-Type': 'application/json' ,  
+                      'Authorization': 'text/plain',
+                      'Set-Cookie': 'text/plain',
+                    }
+                  }
+                   bk  = bk + '/api/v1/user/login'
+                 const response = await this.axiosInstance?.post(bk,body,config);
+                 try { 
+                         response?.headers['set-cookie'] 
+
+                         let setHC =  response?.headers['Set-Cookie']
+                         if( isNullOrUndefined(setHC)) {
+                          setHC =  response?.headers['set-cookie'] 
+                           // check refresh-token in case max-age over
+                           if( isNullOrUndefined(setHC)) {
+                            setHC =  response?.headers['refreshToken'] 
+                            }
+                         }
+                       
+                         let setHRC = response?.headers['Set-Cookie'];
+                         if( isNullOrUndefined(setHC)) {
+                          setHRC =  response?.headers['set-cookie'] 
+                           // check refresh-token in case max-age over
+                           if( isNullOrUndefined(setHC)) {
+                            setHRC =  response?.headers['refreshToken'] 
+                            }
+                         }
+                         setHRC = response?.headers['set-cookie'];
+                       
+                         let k = undefined
+                         let kt = undefined
+                         if (setHC) {
+                           k =  this.readCookie("token",setHC.toString());
+                         }else {
+                           k =  this.readCookie("token","");
+                         }
+                         if(setHRC ) {
+                            kt = this.readCookie("refreshToken",setHRC.toString());
+                       }else {
+                           kt =  this.readCookie("refreshToken","");
+                         }
+                         if(setHC !== undefined && setHC !== null){
+                            let c=   setHC.toString();
+                             let c_token =  c.split("=");
+                             if(Array.isArray(c_token)){
+                               // every even posotion contains a cookie
+                               for (let i = 0; i < c_token.length; i++) {
+                                 let c = c_token[i].trim();
+                                 if (c.indexOf("token") === 0) {
+                                    k =   c.substring("token".length, c.length);
+                                    console.log( "level 1 server side found ...  ");
+                                 }
+                                 if (c.indexOf("refreshToken") === 0) {
+                                   kt =   c.substring("refreshToken".length, c.length);
+                                   console.log( "level 2 server side found ...  ");
+                                }
+                               }
+                             }
+                         }
+                       
+                          
+                         if(k !=undefined && kt !=undefined){
+                           console.log( "Login contains valid details ...  ");
+                         }
+                         else {
+                           console.log( "Login details missing ...  ");
+                         }
+                         let merResp = Object.assign({} , this.getDecodedAccessToken(k) , response?.data);
+                          
+                         this.authObservable$ = of({"token": merResp, "refreshToken": kt});
+                        }catch (error ){
+                          console.log("Login backed service unreacable .... ")
+                          return of(false)
+                        }
+                        return this.authObservable$;
+  
+          })();
+          
+
+       }
