@@ -9,6 +9,6 @@
   force = true
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
-  for = "/*"
+  for = "/api/*"
   [headers.values]
     Access-Control-Allow-Origin = "https://5j3c1fv094.execute-api.us-east-1.amazonaws.com"
