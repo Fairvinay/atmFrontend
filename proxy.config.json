@@ -7,7 +7,7 @@
         "changeOrigin": false
   },
   "/pre/api/*": {
-    "target": "https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pronet",
+    "target": "https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pro",
     "logLevel": "debug",
     "pathRewrite": {
         "^/dev": ""
