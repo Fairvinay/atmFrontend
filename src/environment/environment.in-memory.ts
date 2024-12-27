@@ -3,7 +3,7 @@ export const environment = {
   
   production: true,
   useInMemoryDB: true,
-  bakendUrl:  'https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pronet',
+  bakendUrl:  'https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pro',
   // "https://aftpqxynif.execute-api.us-east-1.amazonaws.com/dev",
   // "https://ie89g9eeje.execute-api.us-east-1.amazonaws.com/dev",
   //'https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pre'  , //       'http://192.168.1.5:5000/api', //(spring) 'http://localhost:8080/api',
@@ -11,7 +11,7 @@ export const environment = {
   backend: { 
       baseURL:  "https://tjfh2jct45.execute-api.ap-south-1.amazonaws.com/dev",
         site:'https://storenotify.in/',
-        logoutSpring:  'https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pronet'
+        logoutSpring:  'https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pro'
         
         // "https://aftpqxynif.execute-api.us-east-1.amazonaws.com/dev"
         //"https://ie89g9eeje.execute-api.us-east-1.amazonaws.com/dev",
