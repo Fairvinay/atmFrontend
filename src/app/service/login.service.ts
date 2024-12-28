@@ -104,7 +104,7 @@ export class LoginService {
     
     //{ 'content-type': 'application/json'}  
      let  body=JSON.stringify(person);
-     body = person.toString();
+     //body = person.toString();
     try {  
         let bk = this.backUrl ;
       
