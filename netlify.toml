@@ -1,6 +1,6 @@
 [build]
   publish="dist/atm-app-frontend"
-  command="npm run build:in-memory"
+  command="npm run build:in-memory && npm run rundev:in-memory"
 
 [[redirects]]
   from = "/api/*"
