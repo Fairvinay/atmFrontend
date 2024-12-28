@@ -12,3 +12,19 @@
   for = "/api/*"
   [headers.values]
     Access-Control-Allow-Origin = "https://5j3c1fv094.execute-api.us-east-1.amazonaws.com"
+
+[functions]
+  # Directory with serverless functions, including background
+  # functions, to deploy. This is an absolute path relative to the 
+  # base directory, which is the root by default (/).
+  directory = "netlify/functions/"
+
+
+# Use [dev] to set configuration overrides for local
+# development environments run using Netlify Dev - except
+# for environment variables. Environment variables for Netlify
+# Dev should be set under [context.dev.environment] instead.
+[dev]
+  command = "npm start"
+  port = 8888
+  publish = "dist/netlify"

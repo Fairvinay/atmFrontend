@@ -4,6 +4,10 @@ export  const environment = {
   
     production: true,
     useInMemoryDB: false,
+    netlifyBackend : { 
+        urlLogin : '/api/v1/user/login', 
+        urlRegister:'/api/v1/user/register'
+    },
     bakendUrl: 'https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/pro', 
     //"https://aftpqxynif.execute-api.us-east-1.amazonaws.com/dev",
     // "https://ie89g9eeje.execute-api.us-east-1.amazonaws.com/dev",

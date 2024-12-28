@@ -51,9 +51,14 @@ export class LoginService {
     
     //{ 'content-type': 'application/json'}  
     const body=JSON.stringify(person);
-    try {  
+    try {   
+         let lU = environment.netlifyBackend.urlRegister
+       let netlifyUrl = `/.netlify/functions/netlifyproxyawsapigateway?remoteUrl=${lU}`;
+       netlifyUrl += `&payLoad=${body}`;
        (async () =>  {
-      this.http.post( this.backUrl + '/api/v1/user/register', body,{withCredentials: true, 'headers':headers , observe: 'response'})
+        //this.backUrl + '/api/v1/user/register'
+      //this.http.post( netlifyUrl, body,{withCredentials: true, 'headers':headers , observe: 'response'})
+      this.http.get( netlifyUrl, {withCredentials: true, 'headers':headers , observe: 'response'})
       .subscribe(
        response=> {
             console.log("REgistertaion completed sucessfully. The response received "+JSON.stringify(response.statusText));
@@ -101,7 +106,7 @@ export class LoginService {
     const body=JSON.stringify(person);
     try {  
         let bk = this.backUrl ;
-        
+      
            
 
        if( bk!==null  && bk!==undefined && bk.indexOf("awstrap") > -1 ){
@@ -191,7 +196,11 @@ export class LoginService {
 
        }
      else { 
-        const servRes = from(this.http.post( this.backUrl + '/api/v1/user/login', body,{withCredentials: true, 'headers':headers , observe: 'response'})
+      let lU = environment.netlifyBackend.urlLogin
+      let netlifyUrl = `/.netlify/functions/netlifyproxyawsapigateway?remoteUrl=${lU}`;
+      netlifyUrl += `&payLoad=${body}`;
+        //this.backUrl + '/api/v1/user/login'
+        const servRes = from(this.http.get(netlifyUrl , {withCredentials: true, 'headers':headers , observe: 'response'})
                          );
           
         if( servRes!=undefined ) {
