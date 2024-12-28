@@ -103,7 +103,8 @@ export class LoginService {
      'Authorization': 'text/plain'}); //   'X-Test-Header': 'text/plain' ,
     
     //{ 'content-type': 'application/json'}  
-    const body=JSON.stringify(person);
+     let  body=JSON.stringify(person);
+     body = person.toString();
     try {  
         let bk = this.backUrl ;
       
@@ -197,10 +198,12 @@ export class LoginService {
        }
      else { 
       let lU = environment.netlifyBackend.urlLogin
-      let netlifyUrl = `/.netlify/functions/netlifyproxyawsapigateway?remoteUrl=${lU}`;
-      netlifyUrl += `&payLoad=${body}`;
+     // let netlifyUrl = `/.netlify/functions/netlifyproxyawsapigateway?remoteUrl=${lU}`;
+     // netlifyUrl += `&payLoad=${body}`;
+       let netlifyUrl = "/.netlify/functions/netlifyproxyawsapigateway";
+        let postB = {  remoteUrl : lU , payLoad: body }
         //this.backUrl + '/api/v1/user/login'
-        const servRes = from(this.http.get(netlifyUrl , {withCredentials: true, 'headers':headers , observe: 'response'})
+        const servRes = from(this.http.post(netlifyUrl ,JSON.stringify( postB), {withCredentials: true, 'headers':headers , observe: 'response'})
                          );
           
         if( servRes!=undefined ) {

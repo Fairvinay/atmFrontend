@@ -205,8 +205,7 @@ export const handler: Handler = async (event, context) => {
               console.log('axios server ready ');
                                response=  {
                                                          statusCode: 200,
-                                                       body: JSON.stringify(servRes.data),
-                                                       headers: JSON.stringify(servRes.headers)
+                                                       body: JSON.stringify(servRes.data)
                                                   }
                }
            
@@ -240,6 +239,15 @@ export const handler: Handler = async (event, context) => {
     body: JSON.stringify({
       message: `Hello, ${name1}!`,
     }),
+    
+    headers: {
+      
+    "X-Test-Header": `${servRes.headers["X-Test-Header"]}`,
+      'Cache-Control': 'no-cache',
+  
+    }
+
+
   }*/
 }
 /*

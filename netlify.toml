@@ -1,18 +1,25 @@
 [build]
   publish="dist/atm-app-frontend"
-  command="npm run build:in-memory && npm run rundev:in-memory"
-
-[[redirects]]
-  from = "/api/*"
-  to = "https://5j3c1fv094.execute-api.us-east-1.amazonaws.com/:splat"
-  status = 200
-  force = true
+  command="npm run build:in-memory "
+  functions = "functions"
+#[[redirects]]
+#  from = "pro/*"
+#  to = "/.netlify/functions/netlifyproxyawsapigateway/*"
+#  status = 200
+#  force = true
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
   for = "/api/*"
   [headers.values]
-    Access-Control-Allow-Origin = "https://5j3c1fv094.execute-api.us-east-1.amazonaws.com"
-
+    Access-Control-Allow-Origin = "https://676f9d600a5c634129a8769b--mellifluous-queijadas-f17050.netlify.app" 
+    Access-Control-Allow-Methods = "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT"
+    Access-Control-Allow-Credentials = "true"
+[[headers]]
+  for = "/.netlify/functions/netlifyproxyawsapigateway/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://676f9d600a5c634129a8769b--mellifluous-queijadas-f17050.netlify.app" 
+    Access-Control-Allow-Methods = "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT"
+    Access-Control-Allow-Credentials = "true"
 [functions]
   # Directory with serverless functions, including background
   # functions, to deploy. This is an absolute path relative to the 
