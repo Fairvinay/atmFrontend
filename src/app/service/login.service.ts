@@ -52,13 +52,15 @@ export class LoginService {
     //{ 'content-type': 'application/json'}  
     const body=JSON.stringify(person);
     try {   
-         let lU = environment.netlifyBackend.urlRegister
-       let netlifyUrl = `/.netlify/functions/netlifyproxyawsapigateway?remoteUrl=${lU}`;
-       netlifyUrl += `&payLoad=${body}`;
+         let lU = environment.netlifyBackend.urlRegister;
+      //  let netlifyUrl = `/.netlify/functions/netlifyproxyawsapigateway?remoteUrl=${lU}`;
+      //  netlifyUrl += `&payLoad=${body}`;
+      let netlifyUrl = "/.netlify/functions/netlifyproxyawsapigateway";
+      let postB = {  remoteUrl : lU , payLoad: body };
        (async () =>  {
         //this.backUrl + '/api/v1/user/register'
       //this.http.post( netlifyUrl, body,{withCredentials: true, 'headers':headers , observe: 'response'})
-      this.http.get( netlifyUrl, {withCredentials: true, 'headers':headers , observe: 'response'})
+      this.http.post( netlifyUrl, JSON.stringify( postB),{withCredentials: true, 'headers':headers , observe: 'response'})
       .subscribe(
        response=> {
             console.log("REgistertaion completed sucessfully. The response received "+JSON.stringify(response.statusText));

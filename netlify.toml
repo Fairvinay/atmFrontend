@@ -29,9 +29,9 @@
 
 # Use [dev] to set configuration overrides for local
 # development environments run using Netlify Dev - except
+# targetPort 8888 did not work 
 # for environment variables. Environment variables for Netlify
 # Dev should be set under [context.dev.environment] instead.
 [dev]
   command = "npm start"
-  port = 8888
   publish = "dist/netlify"

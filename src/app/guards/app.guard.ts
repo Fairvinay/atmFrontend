@@ -1,9 +1,11 @@
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { tap } from "rxjs/operators";
 import { CanActivate, CanLoad, Router ,ActivatedRoute ,ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { AuthService } from "../services/auth.service";
-
+import * as jwt_decode from "jwt-decode";
+import { isNonEmptyString } from "tough-cookie/dist/validators";
+import { isNullOrUndefined } from "../core/utils";
 @Injectable({
   providedIn: "root",
 })
@@ -43,7 +45,7 @@ export class AppGuard implements CanActivate, CanLoad {
          }
       }
     console.log('[ResetPasswordGuard]', JSON.stringify(next.params)); 
-    console.log('[queryParamMap]', JSON.stringify(next.queryParamMap)); 
+   // console.log('[queryParamMap]', JSON.stringify(next.queryParamMap)); 
     console.log('[paramMap]', JSON.stringify(next.paramMap)); 
 
     let vra = next.paramMap.get('jwt_token');
@@ -56,16 +58,27 @@ export class AppGuard implements CanActivate, CanLoad {
     let qid = next.queryParamMap.get('jwt_token')
     console.log(" typeof this.id "+(typeof this.id != undefined || this.id != null) )
     console.log(" typeof qid "+(typeof qid !== undefined || qid !== null || qid !=='') )
+    let tt  =   localStorage.getItem(this.JWT_TOKEN );
+
     if( this.id != undefined || this.id != null ) {
-        console.log(" this.id "+this.id)
+        console.log(" this.id "); //+this.id)
         // set the jwt_token
           localStorage.setItem(this.JWT_TOKEN, this.id);
        
     }
     if ( qid != undefined || qid != null ){
-       console.log(" qid "+qid)
+       console.log(" qid present "); // +qid)
        // set the jwt_token
           localStorage.setItem(this.JWT_TOKEN, qid);
+    }
+    else if   ( tt  !== undefined || tt  !== null ) { 
+          let isValid = getDecodedAccessToken(tt);
+          if(!isNullOrUndefined(isValid)){
+            console.log("token expired ")
+          }
+          else {
+            return of  (true);
+          }
     }
     else{
           console.log("token not in path and query param ")
@@ -90,4 +103,13 @@ export function cookieExists(cookie: string): boolean {
   return document.cookie
     .split(';')
     .some((item) => item.trim().startsWith(`${cookie}=`));
+}
+export function getDecodedAccessToken(token: string| undefined | null): any {
+  try {
+    if(token )
+    return jwt_decode.jwtDecode(token);
+    else  return null;
+  } catch(Error) {
+    return null;
+  }
 }

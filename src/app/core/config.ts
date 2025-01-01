@@ -8,6 +8,8 @@ interface Config {
 
 // Session auth needs to use the same origin anyway
 export const config: Config = {
+  googleApisUserInfoUrl :'https://www.googleapis.com/oauth2/v1/userinfo',
+  consentUrl : environment.backend?.baseURL != undefined ? environment.backend?.baseURL +  "/api/auth/consent" : '' +  "/api/auth/consent",
   apiUrl: environment.backend?.baseURL != undefined ? environment.backend?.baseURL + "/api": '' + "/api",  //http://localhost:8080/
   adminUrl: environment.backend?.baseURL != undefined ? environment.backend?.baseURL + "/api/admin": '' + "/api/admin",  //http://localhost:8080/
   authUrl: environment.backend?.baseURL != undefined ? environment.backend?.baseURL + "/api/auth" : '' + "/api/auth",

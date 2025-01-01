@@ -24,7 +24,7 @@ export class JwtAuthStrategy implements AuthStrategy<Token> {
       if (token ) {
          let deToken =     this.getDecodedAccessToken(token);
          if(deToken!== undefined && deToken !== null && deToken !==''){
-            console.log(" json "+JSON.stringify(deToken))
+           //  console.log(" json "+JSON.stringify(deToken))
              const { role, email , confirmed , accountId }  =  deToken
              localStorage.setItem("sub",role)
              localStorage.setItem("email",email)

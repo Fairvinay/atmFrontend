@@ -26,6 +26,7 @@ import  bs58  from 'bs58'
 import { AuthModule } from "./auth/auth.module";
 import { environment } from 'src/environment/environment';
 import { AcknowledgeComponent } from './components/acknowledge/acknowledge.component';
+import { GoogleComponent } from './components/callbacks/google/google.component';
 
 let arr = new Uint8Array(bs58.decode(  environment.CLIDActual))  ;//.toString('utf-8');
  let decodedclidBase58 = Array.from( arr )
@@ -45,7 +46,8 @@ let arr = new Uint8Array(bs58.decode(  environment.CLIDActual))  ;//.toString('u
     ContactComponent,
     ProfileComponent,
     FaqComponent,
-    MusicComponent  
+    MusicComponent,
+    GoogleComponent  
   ],
   imports: [
     BrowserModule,AuthModule,
@@ -61,8 +63,8 @@ let arr = new Uint8Array(bs58.decode(  environment.CLIDActual))  ;//.toString('u
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider(
-              `${decodedclidBase58}.apps.googleusercontent.com`
+            provider: new GoogleLoginProvider( environment. googleconsentid
+              
             )
           }
           /*{

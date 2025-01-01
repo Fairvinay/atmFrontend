@@ -37,7 +37,7 @@ export const handler: Handler = async (event, context) => {
      // to post the data to remote aws api gateway 
      let ftname = "netlifyproxyawsapigateway";
      let nt =       "netlifyproxyawsapigateway".length;
-     let apipart  =   '/';
+     let apipart  =   '/'; let bodyOk = false;
      try{
       path = event.rawUrl !=undefined ? event.rawUrl : "/";
       console.log("path " +JSON.stringify(path)); 
@@ -56,7 +56,7 @@ export const handler: Handler = async (event, context) => {
         apipart  =   '' //  netlifyUrl.substring(netlifyUrl.indexOf(ftname )+nt);
         try { 
         let partB = event.body;
-        let bodyOk = false;
+       
           if(!isNullOrUndefined(event.queryStringParameters)){
              remoteCallBody   =  path
              let params = remoteCallBody.split("&")
@@ -101,6 +101,27 @@ export const handler: Handler = async (event, context) => {
       
           
        }
+       if(path && !bodyOk &&  !isNullOrUndefined(event.body) && Object.keys(event.body).length >1){
+        // let  netlifyUrl   =      extractNetlifySiteFromContext(context)
+        apipart  =   '' //  netlifyUrl.substring(netlifyUrl.indexOf(ftname )+nt);
+        try { 
+          let partB = event.body;
+           
+
+           if(!isNullOrUndefined(partB) && !bodyOk ){  
+            remoteCallBody   = JSON.parse(partB.toString())
+              if(!isNullOrUndefined( remoteCallBody?.remoteUrl) && 
+                 !isNullOrUndefined( remoteCallBody?.payLoad)  ){
+                  console.log("invoke body okay   "); 
+                  bodyOk = true;
+              }
+          }
+
+         }
+         catch(err) { 
+          console.log("invalid body  " +JSON.stringify(err)); 
+          } 
+      }
        console.log("apipart " +JSON.stringify(apipart)); 
      } catch(err) { 
          console.log("error " +JSON.stringify(err)); 
@@ -211,7 +232,29 @@ export const handler: Handler = async (event, context) => {
            
             break;  
         case "/api/v1/user/register":  
-        
+               console.log( "register at cloud spring backend...  ");
+               console.log("reaching :  "+bk+'/api/v1/user/register')
+               console.log("body :  "+ remoteCallBody?.payLoad );
+                let bJRe = "";
+               try {
+                bJRe = JSON.parse(remoteCallBody?.payLoad)
+                    console.log("parsed the payLoad ")
+               }catch (err ){
+                console.log("not proper JSON ")
+               }
+               let servRegRes= await axios.post( bk+'/api/v1/user/register',JSON.stringify(bJRe),config)
+              console.log(servRegRes.data);
+              console.log(JSON.stringify(servRegRes.headers));
+              if( servRegRes!=undefined ) {
+                console.log('axios server ready ');
+                  response=  {
+                          statusCode: 200,
+                        body: JSON.stringify(servRegRes.data)
+                     }
+                 }
+               
+
+
             break;  
         case '/about.html':  
        

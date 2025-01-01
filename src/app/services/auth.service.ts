@@ -13,6 +13,7 @@ import { AuthStrategy, AUTH_STRATEGY } from "./auth.strategy";
 import { LoginRequest } from "@models/loginRequest";
 import { User } from "@models/user";
 import { Role } from "@models/types";
+import { environment } from "src/environment/environment";
 
 @Injectable({
   providedIn: "root",
@@ -73,6 +74,68 @@ export class AuthService {
      				 catchError(this.errorHandler)
      			 );
    }
+
+   loginGoogleAuthNetify(dynamicGoogle:any){
+       let gUrl =   environment.backend.baseURL
+       let netlifyRe = environment.netlifyGoogleAuth;
+        let remote = "remoteUrl="+netlifyRe.remoteUrl+"&payLoad="+netlifyRe.payLoad;
+                 
+        let body  = JSON.stringify(netlifyRe);
+
+        return this.http
+            .post<any>(`${gUrl}`,body ) ;
+       /*return this.http
+            .get<any>(`${dynamicGoogle}` ) ;  // 'Authorization':`Bearer ${actk}`,
+            /*,  {headers: { 
+               
+                "Content-Type": "application/json"
+            }}  */
+   }
+   consentTokens(code :any) {
+    console.log(" requesting consent "+JSON.stringify(config["consentUrl"]));
+    //const xhr = new XMLHttpRequest();
+    //    xhr.open("GET", `${config["consentUrl"]}/?code=${code}`, true);
+        /*xhr.onload = () => {
+          // Request finished. Do processing here.
+        };*/
+    // AWS URL NOT working and Netlify consent code not ready so skipping 
+       if(!environment.notReadyConsent)
+        { window.location.href = `${config["consentUrl"]}/?code=${code}`
+        }
+    //    xhr.send();
+     // return this.http
+     //    .get<any>(`${config["consentUrl"]}`,  { params : { code : code }} )
+        
+      }
+      //https://www.googleapis.com/oauth2/v1/userinfo
+      consentUserByAccess(tokens:any) {
+            console.log(`${config["googleApisUserInfoUrl"]}`)
+            console.log(`${tokens}`)    
+            let actk = tokens.access_token
+            console.log(`access ${actk}`)
+            let body = JSON.stringify(tokens)
+            let postAwsLamda = environment.googleApisUserInfoUrl;
+             return this.http
+            .post<any>(`${postAwsLamda}/api/auth/consent/user`,body,  {headers: { 
+                'Authorization':`Bearer ${actk}`,
+                "Content-Type": "application/json"
+            }}  ) ;
+
+      }
+      consentUser(code :any) {
+        console.log(" requesting consent "+JSON.stringify(config["consentUrl"]));
+      //  const xhr = new XMLHttpRequest();
+       // xhr.open("GET", `${config["consentUrl"]}/user?code=${code}`, true);
+        /*xhr.onload = () => {
+          // Request finished. Do processing here.
+        };*/
+
+       //xhr.send( );
+       window.location.href =  `${config["consentUrl"]}/user?code=${code}`
+        //return this.http
+         //    .get<any>(`${config["consentUrl"]}`,  { params : { code : code }} )
+            
+          }
   login(loginRequest: LoginRequest): Observable<any> {
      console.log(" this.auth strategy "+this.auth.stringify(this.auth));
 	console.log(" this.auth URL "+JSON.stringify(config["authUrl"]));

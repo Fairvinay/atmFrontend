@@ -1,0 +1,6 @@
+     /* this. handleGoogleSignIn(); */
+     
+     // delete f.keys.find( r => r=='jwt_token')
+                 /*let jwt = f.keys.find( r => r=='jwt_token')
+                    jwt?.replace("jwt_token","gt");*/
+                 // "@types/gapi": "^0.0.47"

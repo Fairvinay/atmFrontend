@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, of, tap } from 'rxjs';
+import { isNullOrUndefined } from 'src/app/core/utils';
 import { AuthService } from 'src/app/services/auth.service';
 import { environment } from 'src/environment/environment';
 
@@ -10,10 +11,10 @@ import { environment } from 'src/environment/environment';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit{
+export class HeaderComponent implements OnInit , AfterViewInit {
   profilePrefix : string = "Vinayak A";
   profileName : string = "Vinayak Anvekar ";
-  pictureUrl: string | undefined;
+  pictureUrl: string = '/assets/images/profile-img-self.png'// | undefined;
   job: string | undefined;
   email: string | undefined;
   tempoLogout : Observable<any> | undefined;
@@ -21,7 +22,7 @@ export class HeaderComponent implements OnInit{
   loginUrl: string;
  
   constructor(
-    
+    private cdr: ChangeDetectorRef,
     private authService: AuthService ,
     private router: Router, private http: HttpClient
   ) { 
@@ -38,12 +39,16 @@ export class HeaderComponent implements OnInit{
      let userInfo :any = localStorage.getItem("token");
      let s = localStorage.getItem("sub");
      let n = localStorage.getItem("email");
+     let im =  localStorage.getItem("imageUrl" );
      this.profilePrefix = ( s!==undefined && s !=null)? s.toString() :  this.profilePrefix ;
      this.profileName = ( n!==undefined && n !=null)? n.toString() : this.profileName;
-     console.log(" s "+s)
+     this.pictureUrl = ( im!==undefined && im !=null)? im.toString() : '/assets/images/profile-img-default.png';
+    
+      console.log(" s "+s)
      console.log("n "+n)
      if(this.profileName !== 'vvanvekar@gmail.com' && this.profilePrefix !== 'vvanvekar@gmail.com' ){
-      this.pictureUrl = '/assets/images/profile-img-default.png'
+       
+       this.pictureUrl = '/assets/images/profile-img-default.png'
       console.log("profile default")
      
       this.job = "register please"
@@ -93,6 +98,20 @@ export class HeaderComponent implements OnInit{
         }
         
      }
+  }
+  ngAfterViewInit() {
+   console.log("View initialised ....")
+  
+    let im =  localStorage.getItem("imageUrl" );
+    console.log("im "+im)
+    if(!isNullOrUndefined(im)){
+      console.log("im " )
+      this.pictureUrl = im;
+      this.cdr.detectChanges();
+    }
+   
+    //( im!==undefined && im !=null)? im.toString() : '/assets/images/profile-img-default.png';
+   
   }
   logout() {
     console.log("layout logout " );

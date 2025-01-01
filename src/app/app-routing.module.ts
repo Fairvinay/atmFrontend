@@ -10,9 +10,11 @@ import { FaqComponent } from './components/faq/faq.component';
 import { MusicComponent } from './components/music/music.component';
 import { AppGuard } from './guards/app.guard';
 import { AcknowledgeComponent } from './components/acknowledge/acknowledge.component';
+import { GoogleComponent } from './components/callbacks/google/google.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'acknowlege', component:AcknowledgeComponent },
@@ -24,7 +26,13 @@ const routes: Routes = [
   {
     path: "app",
     canActivate: [AppGuard],
-    component: HomeComponent,
+    component: GoogleComponent,
+    
+  },
+  {
+    path: "consent",
+    canActivate: [AppGuard],
+    component: GoogleComponent,
     
   }
 ];

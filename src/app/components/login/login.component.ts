@@ -8,8 +8,17 @@ import { LoginService } from 'src/app/service/login.service';
 import { debounceTime, map, switchMap, tap } from 'rxjs/operators';
 import { LoginNodeJwtService } from 'src/app/service/loginnodejwt.service';
 import { SocialAuthService, SocialUser } from "@abacritt/angularx-social-login";
-
+import { GoogleSigninButtonDirective } from "@abacritt/angularx-social-login";
 import { Observable, of } from 'rxjs';
+import { isNullOrUndefined } from 'src/app/core/utils';
+import { identifierName } from '@angular/compiler';
+import  bs58  from 'bs58'
+import { AuthService } from 'src/app/services/auth.service';
+declare global {
+  interface Window {
+    onGoogleSignIn: (response: any) => void;
+  }
+}
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -19,6 +28,10 @@ export class LoginComponent  implements OnInit {
   loginForm: FormGroup;
   backUrl :any 
   googleLogin = "Sign with Google";
+  google_login_id="";
+  buttonTxt = this.googleLogin;
+  theme = 'basic';
+ faceBookLogin = "Sign with Facebook";
   isSpringJwt : any =  {
     text: "Node",
     value:true
@@ -32,16 +45,22 @@ export class LoginComponent  implements OnInit {
 
   isLoading: boolean = false;
   responseMessage: string = '';
+  googleAuth: string;
+  // { remoteUrl: string; payLoad: { username: string; }; };
    
   constructor(
     private fb: FormBuilder,
-    private loginService: LoginService,
+    private loginService: LoginService, private auth : AuthService,
     private loginnodeServ: LoginNodeJwtService,private authService: SocialAuthService,
     private router: Router
   ) {
      this.backUrl =  environment.bakendUrl;
      this.baseUrl = environment.backend.baseURL;
-    
+     let gUrl =   environment.backend.baseURL
+     let netlifyRe = environment.netlifyGoogleAuth;
+      let remote = "remoteUrl="+netlifyRe.remoteUrl+"&payLoad="+JSON.stringify(netlifyRe.payLoad);
+
+    this.googleAuth = encodeURI(gUrl +"?"+ remote);
      this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -61,7 +80,13 @@ export class LoginComponent  implements OnInit {
         console.log("not logged in ")
       }
     });
-
+    let arr = new Uint8Array(bs58.decode(  environment.CLIDActual))  ;//.toString('utf-8');
+    let decodedclidBase58 = Array.from( arr )
+       .map( (val) => val.toString( 16 ).padStart( 2,"0" ) )
+       .join(" ");
+       this.google_login_id =  `${decodedclidBase58}.apps.googleusercontent.com`;
+       // this can be specified in the meta content attribute then the small signin button will appear.
+       
   }
 
   ngOnInit() {
@@ -80,12 +105,111 @@ export class LoginComponent  implements OnInit {
       this.saveTicket();
       this.refreshTicket();
     })
+     // Google Simple Signin 
+     const body = <HTMLDivElement>document.body;
+     const script = document.createElement('script');
+     script.src = 'https://accounts.google.com/gsi/client';
+     script.async = true;
+     script.defer = true;
+     body.appendChild(script);
+     window.onGoogleSignIn= this.onGoogleSignIn.bind(this);
+
+  }
+  onGoogleSignIn(res: any) {
+    console.log(res);
+
   }
   saveTicket() {
     console.log(" form saveTicket ")
   }
   refreshTicket() {
     console.log(" form refreshTicket ")
+  }
+  querySelectorAllInIframes(selector:any) {
+    let elements:any = [];
+  
+    const recurse = (contentWindow = window) => {
+  
+      const iframes = contentWindow.document.body.querySelectorAll('iframe');
+      iframes.forEach(iframe => {
+        
+        if(!isNullOrUndefined(iframe))
+           { /*recurse( iframe.contentWindow || undefined)*/ }
+       });
+      
+      elements = elements.concat(contentWindow.document.body.querySelectorAll(selector));
+    }
+  
+    recurse();
+  
+    return elements;
+  };
+
+  loginGoogleAuth(event:Event) {
+     console.log( "event type "+ event.type);
+     console.log( "url "+ this.googleAuth);
+     //console.log( "event.composedPath "+ event.composedPath);
+    return  this.googleAuth
+    //this.auth.loginGoogleAuthNetify();
+    // window.location.href = this.googleAuth;
+     //event.preventDefault();
+     // 
+
+  }
+
+  clickFbButton(event:Event) {
+
+    event.preventDefault();
+    let gt = document.getElementById("fb-login-button")
+    if(!isNullOrUndefined(gt)) { 
+      console.log("Awaiting Facebook ...")
+      setTimeout ( () => {    // id="fb-root"
+        let gt =  document.querySelector(".pluginLoginButton.pluginLoginButtonsmall");//document.getElementById("fb-root")
+        console.log("Timed Facebook ...")
+        if ( gt  instanceof HTMLButtonElement ){
+              gt.click();
+          }
+
+        if(isNullOrUndefined(gt)){  
+          console.log("Retry Facebook ...")
+            let ifE =   document.querySelector("iframe[title='fb:login_button Facebook Social Plugin']");
+            let ifFF = document.querySelectorAll('html[id="facebook"]')
+            var iframe = document.getElementById('iframeId');
+            //  var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+              //document.querySelector("iframe");
+              if(!isNullOrUndefined(ifFF)){ 
+                if ( ifFF  instanceof HTMLHtmlElement ){
+                  let fbt  = ifFF.getElementsByClassName (".pluginLoginButton.pluginLoginButtonsmall")
+                  if(!isNullOrUndefined(fbt)){ 
+                    console.log("Redefine Facebook ...")
+                      if ( fbt  instanceof HTMLButtonElement ){
+                          fbt.click();
+                      }
+        
+                  }
+                }
+              } 
+            if(!isNullOrUndefined(ifE)){
+              if ( ifE  instanceof HTMLIFrameElement ){
+              let fbt  = ifE.contentDocument?.body.querySelector(".pluginLoginButton.pluginLoginButtonsmall")
+              if(!isNullOrUndefined(fbt)){ 
+                console.log("Redefine Facebook ...")
+                  if ( fbt  instanceof HTMLButtonElement ){
+                      fbt.click();
+                  }
+    
+              }
+            }
+          }
+       
+         //  let fbt  = document.querySelector(".pluginLoginButton.pluginLoginButtonsmall");
+          //  let fbBtt =  new HTMLButtonElement ()  ;
+         
+        }
+      
+      } , 200 )
+    
+    }
   }
   setService(  ) {
      let controls = this.loginForm["controls"];
